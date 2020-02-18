@@ -1,5 +1,7 @@
 import React, {Component} from "react";
 import axios from "axios";
+import Modal from 'react-awesome-modal';
+import './Showdata.css';
 
 export default class Showdata extends Component{
     constructor() {
@@ -21,6 +23,7 @@ export default class Showdata extends Component{
             .then(res => res.json())
             .then(list => this.setState({ list }))
     }
+
     onDelete=(user)=>{
         let url = 'http://35.185.186.61:3000/delete';
         let data = {
@@ -30,7 +33,19 @@ export default class Showdata extends Component{
         setTimeout(()=>{this.componentDidMount()},1)
     }
 
+    openModal() {
+        this.setState({
+            visible : true
+        });
+
+    }
+    closeModal() {
+        this.setState({
+            visible : false
+        });
+    }
     call=(user)=>{
+        this.openModal();
         this.setState({
             idkey:user.id,
             firstname:user.firstname,
@@ -88,21 +103,34 @@ export default class Showdata extends Component{
                                             <td>{user.lastname}</td>
                                             <td><button type="button" class="btn btn-warning" onClick={()=>this.call(user)}>Edit</button></td>
                                             <td><button type="button" class="btn btn-danger"  onClick={()=>this.onDelete(user)}>Delet</button></td>
+                                            <div className="box">
+                                                <Modal visible={this.state.visible}
+                                                       width="1200"
+                                                       height="600"
+                                                       effect="fadeInUp"
+                                                       onClickAway={() => this.closeModal()}
+                                                >
+                                                    <form className="container" id='form'>
+                                                        <div className="form-group">
+                                                            <h3><label htmlFor="id">ID: {this.state.idkey}<br/></label></h3>
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <label>firstname:</label>
+                                                            <input type="text" className="form-control" id="firstname" onChange={this.handleChang} value={this.state.firstname}/>
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <label>lasttname:</label>
+                                                            <input type="text" className="form-control" id="lastname" onChange={this.handleChang} value={this.state.lastname}/>
+                                                        </div>
+                                                        <button type="submit" className="btn btn-primary" onClick={this.handleClicked}>Submit</button>
+                                                    </form>
+                                                </Modal>
+                                            </div>
                                         </tr>
                                     )})}
                         </tbody>
                     </table>
                 </div><br/>
-
-            <table align = 'center' border="2">
-                <thead>
-                <th>EDIT</th>
-                </thead>
-                    id: {this.state.idkey}<br/>
-                    firstname: <input type="text" id="firstname" onChange={this.handleChang} value={this.state.firstname} /><br/><br/>
-                    lastname: <input type="text" id="lastname"onChange={this.handleChang} value={this.state.lastname}/><br/><br/>
-                    <button onClick={this.handleClicked} >send</button>
-            </table>
             </div>
         );
     }
